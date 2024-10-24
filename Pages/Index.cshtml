@@ -1,0 +1,495 @@
+﻿@page
+@model Cocktails.Pages.IndexModel
+@{
+    ViewData["Title"] = "Cocktails";
+    //ViewBag.Title = "Startttttttt";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<form class="container">
+
+
+<h1>Список коктейлей</h1>
+    <ul class="markers">
+        @foreach (var cocktail in Model.Cocktails)
+        {
+            <li>
+                <span onclick="toggleDetails(this)" class="cocktail-title">
+                    <strong class="name">@cocktail.Name</strong>
+                    <span class="arrow"></span>
+                    @* <span class="arrow">▶</span> *@
+                </span>
+                <div class="cocktail-details" style="display: none;">
+                    <p><strong class="name2">Ингредиенты:</strong> @cocktail.Ingredients</p>
+                    <p><strong class="name2">Рецепт:</strong> @cocktail.Recipe</p>
+
+                    <!-- Отображение изображения -->
+                    <img src="@cocktail.ImageUrl" alt="@cocktail.Name" class="img-fluid" width="600" height="400">
+                    
+                    <div class="wrap">
+                      <button onclick="downloadCocktail('@cocktail.Name', '@cocktail.Ingredients', '@cocktail.Recipe', /* '@cocktail.ImageUrl' */)" class="button">Сохранить в файл</button>
+                    </div>
+                    <!-- Кнопка для скачивания коктейля в файл -->
+                    @* <button onclick="downloadCocktail('@cocktail.Name', '@cocktail.Ingredients', '@cocktail.Recipe', /* '@cocktail.ImageUrl' */)" class="button btn-primary">Сохранить в файл</button> *@
+                </div>
+            </li>
+        }
+    </ul>
+</form>
+
+
+
+<style>
+    html, body {
+  height: 100%;
+}
+
+.wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  min-width: 150px;
+  min-height: 30px;
+  display: inline-flex;
+  @* font-family: 'Nunito', sans-serif; *@
+  @* font-size: 14px; *@
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #313133;
+  background: #ca3260;
+   background: linear-gradient(90deg, rgba(129,230,217,1) 0%, rgba(202,50,96,1) 100%);
+  border: none;
+  border-radius: 1000px;
+  box-shadow: 12px 12px 24px rgba(79,209,197,.64);
+  transition: all 0.3s ease-in-out 0s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 10px;
+  }
+
+.button::before {
+content: '';
+  border-radius: 1000px;
+  min-width: calc(180px + 12px);
+  min-height: calc(40px + 12px);
+  border: 6px solid #e75480;
+  box-shadow: 0 0 60px rgba(0,255,203,.64);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all .3s ease-in-out 0s;
+}
+
+.button:hover, 
+.button:focus {
+  color: #313133;
+  transform: translateY(-6px);
+}
+
+.button:hover::before, 
+.button:focus::before {
+  opacity: 1;
+}
+
+.button::after {
+  content: '';
+  width: 30px; height: 30px;
+  border-radius: 100%;
+  border: 6px solid #e75480;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ring 1.5s infinite;
+}
+
+.button:hover::after, 
+.button:focus::after {
+  animation: none;
+  display: none;
+}
+
+.keyframes ring {
+  0% {
+    width: 30px;
+    height: 30px;
+    opacity: 1;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+    @* .markers {
+        margin: 5px 25px 5px 50px;
+
+        padding: 0;
+    }
+    .markers li {
+        list-style-image: url('/images/icons50.png');
+        
+        vertical-align: middle;
+    }
+    .markers li::marker {
+	    font-size: 0.5rem;
+	    line-height: 1;
+    } *@
+    .markers li {
+    list-style: none; /* Отключаем стандартные маркеры */
+    padding-left: 50px; /* Отступ для размещения бокала слева */
+    position: relative; /* Для позиционирования изображения */
+}
+
+.markers li::before {
+    content: "";
+    display: inline-block;
+    width: 32px; /* Ширина бокала */
+    height: 32px; /* Высота бокала */
+    background-image: url('/images/icons50.png'); /* Путь к вашему изображению */
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    top: 50%; /* Позиционирование по центру элемента */
+    transform: translateY(-50%); /* Центрирование по вертикали */
+}
+
+    .body {
+        background-color: wheat;
+    }
+    .container {
+        padding: 25px;
+        border: groove;
+        border-color: #ffa812;
+        border-radius: 2px;
+        background-color: burlywood;
+        color: #26201a;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+    .name {
+        font-size: 1.2rem;
+        @* padding-right: 15px; *@
+        @* margin-bottom: 15px; *@
+        align-items: center;
+        vertical-align: middle;
+    }
+    .name2 {
+        @* padding-left: 25px; *@
+    }
+    .cocktail-title {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    .arrow {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        background-image: url('/images/icons50.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        vertical-align: middle;
+    }
+
+    @* .arrow {
+        margin-top: 0;
+        transition: transform 0.3s;
+    } *@
+
+    .cocktail-details {
+        @* padding: 0; *@
+        @* padding-left: 20px; *@
+    }
+
+    .expanded .arrow {
+        transform: rotate(90deg);
+    }
+
+    .cocktail-details img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .button2 {
+        appearance: auto;
+        text-rendering: auto;
+        color: buttontext;
+        letter-spacing: normal;
+        word-spacing: normal;
+        line-height: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: center;
+        align-items: flex-start;
+        cursor: default;
+        box-sizing: border-box;
+        background-color: buttonface;
+        margin: 0em;
+        padding-block: 1px;
+        padding-inline: 6px;
+        border-width: 2px;
+        border-style: outset;
+        border-color: #b3b3b3;
+        border-image: initial;
+        border-radius: 4px;
+    }
+</style>
+
+<script>
+    function downloadCocktail(name, ingredients, recipe) {
+        const content = `Name: ${name}\nIngredients: ${ingredients}\nRecipe: ${recipe}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+    function toggleDetails(element) {
+        var parentLi = element.parentNode;
+        var details = parentLi.querySelector(".cocktail-details");
+        var arrow = element.querySelector(".arrow");
+
+        if (details.style.display === "none") {
+            details.style.display = "block";
+            element.classList.add("expanded");
+        } else {
+            details.style.display = "none";
+            element.classList.remove("expanded");
+        }
+    }
+</script>
+
+
+
+
+
+
+@* <h1>Маша</h1>
+<ul>
+    @foreach (var cocktail in Model.Cocktails)
+    {
+        <li>
+            <span class="cocktail-title" onclick="toggleDetails(this)">
+                <strong>@cocktail.Name</strong>
+                <span class="more-info">Подробнее</span>
+                <span class="arrow">▶</span>
+            </span>
+            <div class="cocktail-details" style="display: none;">
+                <p><strong>Ингредиенты:</strong> @cocktail.Ingredients</p>
+                <p><strong>Рецепт:</strong> @cocktail.Recipe</p>
+
+                <!-- Кнопка для скачивания коктейля в файл -->
+                <button onclick="downloadCocktail('@cocktail.Name', '@cocktail.Ingredients', '@cocktail.Recipe')" class="btn btn-primary">Скачать файл</button>
+            </div>
+        </li>
+    }
+</ul> *@
+
+@* <style>
+    .cocktail-title {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .arrow {
+        margin-right: 8px; /* Отступ между стрелочкой и текстом */
+        transition: transform 0.3s; /* Плавный переход для поворота стрелочки */
+    }
+
+    .cocktail-details {
+        padding-left: 20px; /* Отступ для деталей коктейля */
+    }
+
+    .expanded .arrow {
+        transform: rotate(90deg); /* Поворачиваем стрелочку при раскрытии */
+    }
+</style>
+
+<script>
+    // Функция для скачивания коктейля как .txt файл
+    function downloadCocktail(name, ingredients, recipe) {
+        // Сформируем содержимое файла
+        const content = `Name: ${name}\nIngredients: ${ingredients}\nRecipe: ${recipe}`;
+
+        // Создадим blob из содержимого файла
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+
+        // Создадим временную ссылку и эмулируем клик для скачивания
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.txt`;
+        document.body.appendChild(a);
+        a.click();
+
+        // Очистим ссылку и объект после скачивания
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+    function toggleDetails(element) {
+        // Получаем родительский элемент списка (li)
+        var parentLi = element.parentNode;
+        var details = parentLi.querySelector(".cocktail-details");
+        var arrow = element.querySelector(".arrow");
+
+        // Переключаем видимость деталей
+        if (details.style.display === "none") {
+            details.style.display = "block";
+            element.classList.add("expanded");
+        } else {
+            details.style.display = "none";
+            element.classList.remove("expanded");
+        }
+    }
+</script> *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* <ul>
+    @foreach (var cocktail in Model.Cocktails)
+    {
+        <li>
+            <span class="cocktail-title" onclick="toggleDetails(this)">
+                <strong>@cocktail.Name</strong>
+                <span class="more-info">Подробнее</span>
+                <span class="arrow">▶</span>
+            </span>
+            <div class="cocktail-details" style="display: none;">
+                <p><strong>Ингредиенты:</strong> @cocktail.Ingredients</p>
+                <p><strong>Рецепт:</strong> @cocktail.Recipe</p>
+
+                <!-- Форма для сохранения данных коктейля в .txt файл -->
+                <form method="post" asp-page="SaveToFile">
+                    <input type="hidden" name="name" value="@cocktail.Name" />
+                    <input type="hidden" name="ingredients" value="@cocktail.Ingredients" />
+                    <input type="hidden" name="recipe" value="@cocktail.Recipe" />
+                    <button type="submit" class="btn btn-primary">Сохранить в .txt файл</button>
+                </form>
+            </div>
+        </li>
+    }
+</ul>
+
+<style>
+    .cocktail-title {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .arrow {
+        margin-right: 8px; /* Отступ между стрелочкой и текстом */
+        transition: transform 0.3s; /* Плавный переход для поворота стрелочки */
+    }
+
+    .cocktail-details {
+        padding-left: 20px; /* Отступ для деталей коктейля */
+    }
+
+    .expanded .arrow {
+        transform: rotate(90deg); /* Поворачиваем стрелочку при раскрытии */
+    }
+</style>
+
+<script>
+    function toggleDetails(element) {
+        // Получаем родительский элемент списка (li)
+        var parentLi = element.parentNode;
+        var details = parentLi.querySelector(".cocktail-details");
+        var arrow = element.querySelector(".arrow");
+
+        // Переключаем видимость деталей
+        if (details.style.display === "none") {
+            details.style.display = "block";
+            element.classList.add("expanded");
+        } else {
+            details.style.display = "none";
+            element.classList.remove("expanded");
+        }
+    }
+</script> *@
+
+
+
+
+
+
+
+
+
+
+@* <div class="container">
+    <h1>Cocktails</h1>
+
+    <div class="list-group">
+        @foreach (var cocktail in Model.Cocktails)
+        {
+            <div class="list-group-item">
+                <h5>@cocktail.Name</h5>
+
+                <a class="btn btn-link" data-bs-toggle="collapse" href="#cocktail-@cocktail.Name" role="button" aria-expanded="false" aria-controls="cocktail-@cocktail.Name">
+                    <i class="fas fa-caret-down"></i>
+                </a>
+                <div class="collapse" id="cocktail-@cocktail.Name">
+                    <p><strong>Ingredients:</strong> @cocktail.Ingredients</p>
+                    <p><strong>Recipe:</strong> @cocktail.Recipe</p>
+                    <form method="post" asp-page="SaveToFile">
+                        <input type="hidden" name="name" value="@cocktail.Name" />
+                        <input type="hidden" name="ingredients" value="@cocktail.Ingredients" />
+                        <input type="hidden" name="recipe" value="@cocktail.Recipe" />
+                        <button type="submit" class="btn btn-primary">Save to file</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div> *@
